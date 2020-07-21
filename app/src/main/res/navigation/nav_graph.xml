@@ -9,5 +9,14 @@
         android:id="@+id/businessOverview"
         android:name="com.example.orderapp.BusinessOverview"
         android:label="fragment_business_overview"
-        tools:layout="@layout/fragment_business_overview" />
+        tools:layout="@layout/fragment_business_overview" >
+        <action
+            android:id="@+id/action_businessOverview_to_businessNotOpen"
+            app:destination="@id/businessNotOpen" />
+    </fragment>
+    <fragment
+        android:id="@+id/businessNotOpen"
+        android:name="com.example.orderapp.BusinessNotOpen"
+        android:label="fragment_business_not_open"
+        tools:layout="@layout/fragment_business_not_open" />
 </navigation>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="20sp"
+    tools:context=".BusinessNotOpen" >
+
+    <ImageView
+        android:id="@+id/clockImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_recent_history"
+        android:contentDescription="@string/clock"/>
+
+    <TextView
+        android:id="@+id/txtOpeningHours"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="13:00 - 22:00"
+        android:textAlignment="center"
+        />
+
+    <TextView
+        android:id="@+id/txtCannotOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cannot_order_now"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtTryAgain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/try_again_later"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textStyle="bold" />
+</LinearLayout>

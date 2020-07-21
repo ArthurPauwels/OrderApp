@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">OrderApp</string>
     <string name="scan_code">Scan code</string>
+    <string name="cannot_order_now">We\'re sorry, but you cannot order at this time.</string>
+    <string name="try_again_later">Please, try again during opening hours.</string>
+    <string name="order_now">Order now</string>
+    <string name="clock">Clock</string>
 </resources>
