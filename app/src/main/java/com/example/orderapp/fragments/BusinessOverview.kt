@@ -19,7 +19,7 @@ class BusinessOverview : Fragment() {
 
     lateinit var binding: FragmentBusinessOverviewBinding
 
-    private val business: Business = Business()
+    private var businessID : String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +31,7 @@ class BusinessOverview : Fragment() {
             R.layout.fragment_business_overview, container, false)
 
         //setup data
-        binding.business = business
+        binding.business = Business()
         //setup buttons
         binding.btnScanCode.setOnClickListener { clickBttnScanCode() }
         binding.bttnOrder.setOnClickListener { clickBttnOrder() }
@@ -56,7 +56,8 @@ class BusinessOverview : Fragment() {
     }
 
     private fun clickBttnOrder(){
-        view?.findNavController()?.navigate(R.id.action_businessOverview_to_businessNotOpen)
+        //view?.findNavController()?.navigate(BusinessOverviewDirections.actionBusinessOverviewToBusinessNotOpen())
+        view?.findNavController()?.navigate(BusinessOverviewDirections.actionBusinessOverviewToMenu(businessID, binding.business!!.name))
     }
 
     private fun clickBttnScanCode(){
