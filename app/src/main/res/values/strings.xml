@@ -5,4 +5,7 @@
     <string name="try_again_later">Please, try again during opening hours.</string>
     <string name="order_now">Order now</string>
     <string name="clock">Clock</string>
+    <string name="share">Share</string>
+    <string name="enter_code">Enter code</string>
+    <string name="history">history</string>
 </resources>
