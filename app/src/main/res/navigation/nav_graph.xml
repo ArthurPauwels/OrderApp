@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/businessOverview"
-        android:name="com.example.orderapp.BusinessOverview"
+        android:name="com.example.orderapp.fragments.BusinessOverview"
         android:label="fragment_business_overview"
         tools:layout="@layout/fragment_business_overview" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/businessNotOpen"
-        android:name="com.example.orderapp.BusinessNotOpen"
+        android:name="com.example.orderapp.fragments.BusinessNotOpen"
         android:label="fragment_business_not_open"
         tools:layout="@layout/fragment_business_not_open" />
 </navigation>

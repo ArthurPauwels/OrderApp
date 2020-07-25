@@ -1,4 +1,4 @@
-package com.example.orderapp
+package com.example.orderapp.fragments
 
 import android.app.Activity
 import android.content.Intent
@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isInvisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.example.orderapp.R
 import com.example.orderapp.databinding.FragmentBusinessOverviewBinding
 import com.example.orderapp.model.Business
 import com.google.zxing.integration.android.IntentIntegrator
@@ -27,7 +27,8 @@ class BusinessOverview : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_business_overview, container, false)
+        binding = DataBindingUtil.inflate(inflater,
+            R.layout.fragment_business_overview, container, false)
 
         //setup data
         binding.business = business

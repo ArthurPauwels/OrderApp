@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_margin="20sp"
-    tools:context=".BusinessNotOpen" >
+    tools:context=".fragments.BusinessNotOpen" >
 
     <ImageView
         android:id="@+id/clockImage"
