@@ -11,8 +11,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.orderapp.R
+import com.example.orderapp.data.repositories.BusinessRepository
 import com.example.orderapp.databinding.FragmentBusinessOverviewBinding
-import com.example.orderapp.model.Business
+import com.example.orderapp.model.BusinessDTO
 import com.google.zxing.integration.android.IntentIntegrator
 
 class BusinessOverview : Fragment() {
@@ -31,7 +32,7 @@ class BusinessOverview : Fragment() {
             R.layout.fragment_business_overview, container, false)
 
         //setup data
-        binding.business = Business()
+        binding.business = BusinessDTO()
         //setup buttons
         binding.bttnOrder.setOnClickListener { clickBttnOrder() }
         binding.bttnOrder.visibility = View.GONE
@@ -87,6 +88,15 @@ class BusinessOverview : Fragment() {
 
     private fun clickBttnOrder(){
         //view?.findNavController()?.navigate(BusinessOverviewDirections.actionBusinessOverviewToBusinessNotOpen())
+        //todo make this less of a mess
+        if(businessID == null) {
+            showLongToast("Error: no businessID")
+            return
+        }
+        if (binding.business == null){
+            showLongToast("Error: no business")
+            return
+        }
         view?.findNavController()?.navigate(BusinessOverviewDirections.actionBusinessOverviewToMenu(businessID!!, binding.business!!.name))
     }
 
@@ -102,17 +112,19 @@ class BusinessOverview : Fragment() {
     private fun codeScanned(code : String){
         binding.apply {
             //TODO parse code into business and table
-            //TODO get info from repo instead
             businessID = code
-            business?.name = "Business with id ${code}"
-            business?.type = "Bruh"
+            binding.business = BusinessRepository.getBusinessByID(code).toDTO()
             invalidateAll()
             bttnOrder.visibility = View.VISIBLE
         }
-        Toast.makeText(activity, "Scanned: " + code, Toast.LENGTH_LONG).show()
+        showLongToast("Scanned: " + code)
     }
 
     private fun codeCancelled(){
-        Toast.makeText(activity, "Cancelled", Toast.LENGTH_LONG).show()
+        showLongToast("Cancelled")
+    }
+
+    private fun showLongToast(message:String){
+        Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 }
