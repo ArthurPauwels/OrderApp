@@ -12,10 +12,18 @@
         tools:layout="@layout/fragment_business_overview" >
         <action
             android:id="@+id/action_businessOverview_to_businessNotOpen"
-            app:destination="@id/businessNotOpen" />
+            app:destination="@id/businessNotOpen"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_businessOverview_to_menu"
-            app:destination="@id/menu" />
+            app:destination="@id/menu"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/businessNotOpen"
