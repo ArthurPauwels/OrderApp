@@ -1,5 +1,6 @@
 package com.example.orderapp.fragments.businessOverview
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.orderapp.data.repositories.BusinessRepository
@@ -7,13 +8,14 @@ import com.example.orderapp.model.Business
 
 class BusinessOverviewViewModel : ViewModel(){
 
-    var business = MutableLiveData<Business?>()
+    private val _business = MutableLiveData<Business>()
+    val business : LiveData<Business> get() = _business
+
+    private val _readyToOrder = MutableLiveData<Boolean>()
+    val readyToOrder : LiveData<Boolean> get() = _readyToOrder
 
     val hasBusinessSelected : Boolean get() {
-        return business.value != null
-    }
-    init {
-
+        return _business.value != null
     }
 
     fun handleNewCode(code : String) {
@@ -21,6 +23,7 @@ class BusinessOverviewViewModel : ViewModel(){
     }
 
     fun switchBusiness(id : String){
-        business.value = BusinessRepository.getBusinessByID(id)
+        _business.value = BusinessRepository.getBusinessByID(id)
+        _readyToOrder.value = true
     }
 }

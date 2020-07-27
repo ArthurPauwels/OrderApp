@@ -1,5 +1,4 @@
 package com.example.orderapp.fragments.businessOverview
-
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -34,6 +33,7 @@ class BusinessOverview : Fragment() {
         //setup viewModel
         viewModel = ViewModelProvider(this).get(BusinessOverviewViewModel::class.java)
         viewModel.business.observe(viewLifecycleOwner, Observer {it -> updateBusinessInfo(it)})
+        viewModel.readyToOrder.observe(viewLifecycleOwner, Observer { it ->  updateState(it)})
 
         //setup binding
         binding = DataBindingUtil.inflate(inflater,
@@ -58,14 +58,13 @@ class BusinessOverview : Fragment() {
     }
 
     private fun disableShareOption(menu: Menu){
-        menu.findItem(R.id.shareBusiness).setVisible(false)
+        menu.findItem(R.id.shareBusiness).isVisible = false
     }
 
     private fun getShareIntent() : Intent {
         //TODO add better sharing text things
         return ShareCompat.IntentBuilder.from(requireActivity()).setText("placeholder Sharing Text that should be replaced soon").setType("text/plain").intent
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -122,14 +121,11 @@ class BusinessOverview : Fragment() {
         )
     }
 
-
-
     private fun codeScanned(code : String){
         binding.apply {
             //TODO parse code into business and table
             Timber.i("Scanned code: %s", code)
             viewModel.handleNewCode(code)
-            bttnOrder.visibility = View.VISIBLE
         }
     }
 
@@ -137,13 +133,15 @@ class BusinessOverview : Fragment() {
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 
-    fun updateBusinessInfo(business: Business?){
-        if (business == null) {
-            //todo hide button and show scanning / code entering prompt
-        }
-        else {
+    fun updateBusinessInfo(business: Business){
             binding.business = business.toDTO()
             binding.invalidateAll()
+    }
+
+    fun updateState(ready : Boolean){
+        when (ready) {
+            true -> binding.bttnOrder.visibility = View.VISIBLE
+            false -> binding.bttnOrder.visibility = View.GONE
         }
     }
 }

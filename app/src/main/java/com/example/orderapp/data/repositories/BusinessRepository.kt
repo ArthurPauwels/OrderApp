@@ -1,24 +1,29 @@
 package com.example.orderapp.data.repositories
 
+import com.example.orderapp.data.api.IOrderAppAPI
+import com.example.orderapp.data.api.MockAPI
 import com.example.orderapp.model.Business
 import com.example.orderapp.model.BusinessType
 
 object BusinessRepository : IBusinessRepository{
 
     private val businesses : MutableList<Business>
+    private val api : IOrderAppAPI = MockAPI()
 
     init {
         businesses = mutableListOf()
-
-        var scanbusiness = Business("Android Test","TempPlace", BusinessType.RESTAURANT, "Sample description for some business", null)
-        var textbusiness = Business("anID", "Testy mc testface", BusinessType.RESTAURANT, "Sample description of some business", null)
-
-        businesses.add(scanbusiness)
-        businesses.add(textbusiness)
     }
 
     override fun getBusinessByID(businessId: String): Business {
-        return businesses.filter { it.businessID == businessId }.first()
+        val business = businesses.filter { it.businessID == businessId }.firstOrNull()
+        return if (business == null){
+            val newEntry = api.getBusiness(businessId)
+            businesses.add(newEntry)
+            newEntry
+        } else{
+            business
+        }
+
     }
 
     override fun updateBusiness(business: Business) {
