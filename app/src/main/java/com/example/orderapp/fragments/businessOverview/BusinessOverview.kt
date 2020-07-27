@@ -1,10 +1,14 @@
 package com.example.orderapp.fragments.businessOverview
+
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.view.Menu
+import android.view.LayoutInflater
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -17,6 +21,7 @@ import com.example.orderapp.model.Business
 import com.example.orderapp.model.BusinessDTO
 import com.google.zxing.integration.android.IntentIntegrator
 import timber.log.Timber
+
 
 class BusinessOverview : Fragment() {
 
@@ -70,6 +75,7 @@ class BusinessOverview : Fragment() {
         when (item.itemId) {
             R.id.shareBusiness -> shareBusiness()
             R.id.scanCode -> scanCode()
+            R.id.enterCode -> enterCode()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -85,6 +91,29 @@ class BusinessOverview : Fragment() {
         integrator.setBeepEnabled(false)
         //start scan
         integrator.initiateScan()
+    }
+
+    private fun enterCode(){
+        val li = LayoutInflater.from(context)
+        val promptsView: View = li.inflate(R.layout.part_code_input, null)
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+
+        // set part_code_input.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView)
+
+        val userInput = promptsView.findViewById(R.id.codeInput) as EditText
+
+        // set dialog message
+        alertDialogBuilder
+            .setCancelable(false)
+            .setPositiveButton("OK", { dialog, id -> viewModel.handleNewCode(userInput.text.toString())})
+            .setNegativeButton("Cancel", { dialog, id -> dialog.cancel()})
+
+        // create alert dialog
+        val alertDialog: AlertDialog = alertDialogBuilder.create()
+
+        // show it
+        alertDialog.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -103,7 +132,6 @@ class BusinessOverview : Fragment() {
     }
 
     private fun clickBttnOrder(){
-        //view?.findNavController()?.navigate(BusinessOverviewDirections.actionBusinessOverviewToBusinessNotOpen())
         //todo make this less of a mess
         if(!viewModel.hasBusinessSelected) {
             Timber.e("No businessID when trying to order")
@@ -113,12 +141,13 @@ class BusinessOverview : Fragment() {
             Timber.e("No business in binding when trying to order")
             return
         }
+        if(viewModel.business.value!!.isOpen()){
         view?.findNavController()?.navigate(
             BusinessOverviewDirections.actionBusinessOverviewToMenu(
                 viewModel.business.value!!.businessID,
                 binding.business!!.name
             )
-        )
+        )}else view?.findNavController()?.navigate(BusinessOverviewDirections.actionBusinessOverviewToBusinessNotOpen())
     }
 
     private fun codeScanned(code : String){

@@ -1,5 +1,8 @@
 package com.example.orderapp.model
 
+import android.annotation.SuppressLint
+import android.icu.text.SimpleDateFormat
+import java.util.*
 import kotlin.collections.HashSet
 
 class Business (
@@ -16,7 +19,32 @@ class Business (
         return BusinessDTO(name, type.toString())
     }
 
+    @SuppressLint("DefaultLocale")
+    fun isOpen() : Boolean{
+        val weekday = Calendar.getInstance().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)
+        if (weekday == null) return false
+        return when (weekday.toLowerCase()) {
+            "monday" -> checkDay(openingHours.monday)
+            "tuesday" -> checkDay(openingHours.tuesday)
+            "wednesday" -> checkDay(openingHours.wednesday)
+            "thursday" -> checkDay(openingHours.thursday)
+            "friday" -> checkDay(openingHours.friday)
+            "saturday" -> checkDay(openingHours.saturday)
+            "sunday" -> checkDay(openingHours.sunday)
+            else -> false
+        }
+    }
 
+    @SuppressLint("SimpleDateFormat")
+    private fun checkDay(openingHoursForDay : List<Pair<Int, Int>>) : Boolean{
+        val sdf = SimpleDateFormat("HHmm")
+        val currentTime = sdf.format(Date()).toInt()
+        var open = false
+        openingHoursForDay.forEach { pair ->
+            if (currentTime >= pair.first && currentTime <= pair.second) open = true
+        }
+        return open
+    }
 }
 
 enum class BusinessType(val type : String) {
