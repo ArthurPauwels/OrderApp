@@ -48,10 +48,12 @@ class BusinessOverview : Fragment() {
             inflater,
             R.layout.fragment_business_overview, container, false
         )
-        binding.setLifecycleOwner { lifecycle }
+        binding.setLifecycleOwner(this)
         binding.businessOverviewViewModel = viewModel
         binding.showPrompt = View.GONE
         binding.showInfo = View.GONE
+        binding.bttnScan.setOnClickListener { scanCode() }
+        binding.bttnCode.setOnClickListener { enterCode() }
 
         setHasOptionsMenu(true)
 
