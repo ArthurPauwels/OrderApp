@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:text=""
+                    android:text="no rating"
                     android:padding="5sp"
                     android:layout_margin="3sp"
                     android:background="@drawable/small_info_border"/>
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:text=""
+                    android:text="table: 1"
                     android:padding="5sp"
                     android:layout_margin="3sp"
                     android:background="@drawable/small_info_border"/>

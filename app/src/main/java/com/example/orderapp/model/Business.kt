@@ -2,18 +2,37 @@ package com.example.orderapp.model
 
 import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
+import androidx.room.ColumnInfo
 import java.util.*
 import kotlin.collections.HashSet
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class Business (
+@Entity(tableName = "business_table")
+data class Business (
+    @PrimaryKey
+    @ColumnInfo(name = "business_id")
     var businessID : String,
+
+    @ColumnInfo(name = "readable_code")
     var code : String,
+
+    @ColumnInfo(name = "name")
     var name : String,
+
+    @ColumnInfo(name = "business_type")
     var type : BusinessType,
+
+    @ColumnInfo(name = "description")
     var description : String,
+
+    @ColumnInfo(name = "amenities")
     var amenities : Set<String> = HashSet<String>(),
+
+    @ColumnInfo(name = "opening_hours")
     var openingHours : OpeningHours,
 
+    @ColumnInfo(name = "ratingDB")
     var rating : Int? = null
 ) {
     @SuppressLint("DefaultLocale")
