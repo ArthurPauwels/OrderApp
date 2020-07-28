@@ -13,10 +13,10 @@ interface BusinessDatabaseDAO {
     fun update(business: Business)
 
     @Query("SELECT * FROM business_table WHERE business_id = :id")
-    fun getBusinessByID(id : String) : Business
+    fun getBusinessByID(id : String) : LiveData<Business>
 
     @Query("SELECT * FROM business_table WHERE readable_code = :humanReadableCode LIMIT 1")
-    fun getBusinessByCode(humanReadableCode : String) : Business?
+    fun getBusinessByCode(humanReadableCode : String) : LiveData<Business>
 
     @Delete
     fun deleteBusiness(business: Business)

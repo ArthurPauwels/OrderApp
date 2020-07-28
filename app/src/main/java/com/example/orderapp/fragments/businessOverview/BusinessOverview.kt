@@ -12,7 +12,6 @@ import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.orderapp.R
 import com.example.orderapp.data.database.BusinessDatabase
@@ -22,7 +21,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 
 class BusinessOverview : Fragment() {
 
-    private lateinit var viewModel: BusinessOverviewViewModel
+    lateinit var viewModel: BusinessOverviewViewModel
     lateinit var binding: FragmentBusinessOverviewBinding
 
     override fun onCreateView(
@@ -33,9 +32,7 @@ class BusinessOverview : Fragment() {
         super.onCreate(savedInstanceState)
         val app = requireNotNull(this.activity).application
 
-        //setup viewModel
-        val vmFactory = BusinessOverviewViewModelFactory(BusinessDatabase.getInstance(app).businessDAO, app)
-        viewModel = ViewModelProvider(this, vmFactory).get(BusinessOverviewViewModel::class.java)
+        viewModel = BusinessOverviewViewModel()
 
         //observe
         viewModel.overviewState.observe(viewLifecycleOwner, Observer { it -> updateState(it) })

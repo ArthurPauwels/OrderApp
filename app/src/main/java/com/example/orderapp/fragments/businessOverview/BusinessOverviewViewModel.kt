@@ -2,13 +2,15 @@ package com.example.orderapp.fragments.businessOverview
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.example.orderapp.ServiceLocator
 import com.example.orderapp.data.database.BusinessDatabaseDAO
 import com.example.orderapp.data.repositories.BusinessRepository
 import com.example.orderapp.model.Business
 import com.google.zxing.integration.android.IntentResult
+import kotlinx.coroutines.*
 import timber.log.Timber
 
-class BusinessOverviewViewModel(val businessDBDAO : BusinessDatabaseDAO, application: Application) : AndroidViewModel(application) {
+class BusinessOverviewViewModel : ViewModel() {
 
     private val _business = MutableLiveData<Business>()
     val business: LiveData<Business> get() = _business
@@ -25,6 +27,11 @@ class BusinessOverviewViewModel(val businessDBDAO : BusinessDatabaseDAO, applica
 
     val tableString : LiveData<String> = Transformations.map(_table) { table -> "Table: ${table}" }
 
+    private val repository = ServiceLocator.repository()
+
+    private var job = Job()
+    private val uiScope = CoroutineScope(Dispatchers.Main + job)
+
     init {
         _overviewState.value = OverviewState.INITIAL
     }
@@ -38,21 +45,30 @@ class BusinessOverviewViewModel(val businessDBDAO : BusinessDatabaseDAO, applica
     }
 
     fun handleScan(scanResult: IntentResult) {
+
         if (scanResult.contents == null) {
             _overviewState.value = OverviewState.SCAN_FAIL
         } else {
             Timber.i("Scanned: %s", scanResult)
-            val business = BusinessRepository.getBusinessByID(scanResult.contents)
             _table.value = 1 //todo get table info out of qr code
-            switchBusiness(business)
+            uiScope.launch {
+                switchBusiness(getBusinessFromRepository(scanResult.contents).value!!)
+            }
+        }
+
+    }
+
+    private suspend fun getBusinessFromRepository(id: String) : LiveData<Business>{
+        return withContext(Dispatchers.IO){
+            repository.getBusinessByID(id)
         }
     }
 
     fun handleManual(code: String, table: Int) {
         Timber.i("Entered: %s", code)
-        val business = BusinessRepository.getBusinessByCode(code)
+        val business = repository.getBusinessByCode(code)
         _table.value = table
-        switchBusiness(business)
+        switchBusiness(business.value!!)
     }
 
     private fun switchBusiness(business: Business) {
@@ -77,6 +93,11 @@ class BusinessOverviewViewModel(val businessDBDAO : BusinessDatabaseDAO, applica
 
     fun resetNavigation() {
         _navigationEvent.value = OverviewNavigationEvent.NONE
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
     }
 }
 

@@ -1,43 +1,49 @@
 package com.example.orderapp.data.repositories
 
+import androidx.lifecycle.LiveData
+import com.example.orderapp.ServiceLocator
 import com.example.orderapp.data.api.IOrderAppAPI
+import com.example.orderapp.data.api.IWebservice
 import com.example.orderapp.data.api.MockAPI
 import com.example.orderapp.model.Business
-import com.example.orderapp.model.BusinessType
+import timber.log.Timber
+import java.util.concurrent.Executor
 
-object BusinessRepository : IBusinessRepository{
+class BusinessRepository {
 
-    private val businesses : MutableList<Business>
+    //private val webservice : IWebservice = TODO()
+
+    private val businesses : LiveData<List<Business>>
     private val api : IOrderAppAPI = MockAPI()
+    private val dbDAO = ServiceLocator.database().businessDAO
 
     init {
-        businesses = mutableListOf()
+        businesses = dbDAO.getAll()
     }
 
-    override fun getBusinessByID(businessId: String): Business {
-        val business = businesses.filter { it.businessID == businessId }.firstOrNull()
-        return if (business == null){
-            val newEntry = api.getBusiness(businessId)
-            businesses.add(newEntry)
-            newEntry
-        } else{
-            business
-        }
-
+     fun getBusinessByID(businessId: String): LiveData<Business> {
+        val business = dbDAO.getBusinessByID(businessId)
+         return if ( business.value != null) {
+             Timber.i("got business from db")
+             business
+         } else{
+             val fetchedbusiness = api.getBusiness(businessId)
+             Timber.i("got business from API")
+             dbDAO.insert(fetchedbusiness)
+             getBusinessByID(businessId)
+         }
     }
 
-    override fun getBusinessByCode(code: String): Business {
-        val business = businesses.filter { it.code == code }.firstOrNull()
-        return if (business == null){
-            val newEntry = api.getBusinessWithCode(code)
-            businesses.add(newEntry)
-            newEntry
-        } else{
-            business
-        }
-    }
-
-    override fun updateBusiness(business: Business) {
-
+     fun getBusinessByCode(code: String): LiveData<Business> {
+         val business = dbDAO.getBusinessByCode(code)
+         return if ( business.value != null) {
+             Timber.i("got business from db")
+             business
+         } else{
+             val fetchedbusiness = api.getBusinessWithCode(code)
+             Timber.i("got business from API")
+             dbDAO.insert(fetchedbusiness)
+             getBusinessByID(fetchedbusiness.businessID)
+         }
     }
 }
