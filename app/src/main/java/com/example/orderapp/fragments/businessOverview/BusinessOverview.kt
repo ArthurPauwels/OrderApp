@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.orderapp.R
+import com.example.orderapp.data.database.BusinessDatabase
 import com.example.orderapp.databinding.FragmentBusinessOverviewBinding
 import com.google.zxing.integration.android.IntentIntegrator
 
@@ -30,9 +31,12 @@ class BusinessOverview : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         super.onCreate(savedInstanceState)
+        val app = requireNotNull(this.activity).application
 
         //setup viewModel
-        viewModel = ViewModelProvider(this).get(BusinessOverviewViewModel::class.java)
+        val vmFactory = BusinessOverviewViewModelFactory(BusinessDatabase.getInstance(app).businessDAO, app)
+        viewModel = ViewModelProvider(this, vmFactory).get(BusinessOverviewViewModel::class.java)
+
         //observe
         viewModel.overviewState.observe(viewLifecycleOwner, Observer { it -> updateState(it) })
         viewModel.navigationEvent.observe(viewLifecycleOwner, Observer { it -> navigate(it) })
@@ -44,6 +48,7 @@ class BusinessOverview : Fragment() {
             inflater,
             R.layout.fragment_business_overview, container, false
         )
+        binding.setLifecycleOwner { lifecycle }
         binding.businessOverviewViewModel = viewModel
         binding.showPrompt = View.GONE
         binding.showInfo = View.GONE

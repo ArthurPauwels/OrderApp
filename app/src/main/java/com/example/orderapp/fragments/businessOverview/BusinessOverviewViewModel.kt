@@ -1,15 +1,14 @@
 package com.example.orderapp.fragments.businessOverview
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.*
+import com.example.orderapp.data.database.BusinessDatabaseDAO
 import com.example.orderapp.data.repositories.BusinessRepository
 import com.example.orderapp.model.Business
 import com.google.zxing.integration.android.IntentResult
 import timber.log.Timber
 
-class BusinessOverviewViewModel : ViewModel() {
+class BusinessOverviewViewModel(val businessDBDAO : BusinessDatabaseDAO, application: Application) : AndroidViewModel(application) {
 
     private val _business = MutableLiveData<Business>()
     val business: LiveData<Business> get() = _business
