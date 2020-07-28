@@ -7,13 +7,14 @@ import kotlin.collections.HashSet
 
 class Business (
     var businessID : String,
+    var code : String,
     var name : String,
     var type : BusinessType,
     var description : String,
-
-    var rating : Int?,
     var amenities : Set<String> = HashSet<String>(),
-    var openingHours : OpeningHours
+    var openingHours : OpeningHours,
+
+    var rating : Int? = null
 ) {
     fun toDTO() : BusinessDTO{
         return BusinessDTO(name, type.toString())

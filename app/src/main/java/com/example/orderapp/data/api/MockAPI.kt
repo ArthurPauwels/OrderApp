@@ -16,7 +16,7 @@ class MockAPI : IOrderAppAPI{
             OpeningHours.parseOpeningHours(" 17:00 - 22:00")
         )
 
-        return  Business(id,"TempPlace", BusinessType.RESTAURANT, "Sample description for some business", null, setOf("Toilet", "Wheelchair access", "Airco"),openingHours)
+        return  Business(id,"TempPlace", "SOMECODE", BusinessType.RESTAURANT, "Sample description for some business", setOf("Toilet", "Wheelchair access", "Airco"),openingHours)
     }
 
     override fun getBusinessWithCode(code: String): Business {
@@ -31,6 +31,6 @@ class MockAPI : IOrderAppAPI{
             OpeningHours.parseOpeningHours(" 17:00 - 22:00")
         )
 
-        return  Business("Android Test","TempPlace", BusinessType.RESTAURANT, "Sample description for some business", null, setOf("Toilet", "Wheelchair access", "Airco"),openingHours)
+        return  Business("Android Test", code,"TempPlace", BusinessType.RESTAURANT, "Sample description for some business", setOf("Toilet", "Wheelchair access", "Airco"),openingHours)
     }
 }

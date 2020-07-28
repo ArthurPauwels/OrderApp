@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.orderapp.R
 import com.example.orderapp.databinding.FragmentBusinessOverviewBinding
 import com.example.orderapp.model.Business
@@ -25,7 +26,7 @@ import timber.log.Timber
 
 class BusinessOverview : Fragment() {
 
-    private lateinit var viewModel : BusinessOverviewViewModel
+    private lateinit var viewModel: BusinessOverviewViewModel
     lateinit var binding: FragmentBusinessOverviewBinding
 
     override fun onCreateView(
@@ -37,16 +38,20 @@ class BusinessOverview : Fragment() {
 
         //setup viewModel
         viewModel = ViewModelProvider(this).get(BusinessOverviewViewModel::class.java)
-        viewModel.business.observe(viewLifecycleOwner, Observer {it -> updateBusinessInfo(it)})
-        viewModel.readyToOrder.observe(viewLifecycleOwner, Observer { it ->  updateState(it)})
+        //observe
+        viewModel.business.observe(viewLifecycleOwner, Observer { it -> updateBusinessInfo(it) })
+        viewModel.overviewState.observe(viewLifecycleOwner, Observer { it -> updateState(it) })
+        viewModel.navigationEvent.observe(viewLifecycleOwner, Observer { it -> navigate(it) })
 
         //setup binding
-        binding = DataBindingUtil.inflate(inflater,
-            R.layout.fragment_business_overview, container, false)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_business_overview, container, false
+        )
         binding.business = BusinessDTO()
+        binding.businessOverviewViewModel = viewModel
 
         //setup buttons
-        binding.bttnOrder.setOnClickListener { clickBttnOrder() }
         binding.bttnOrder.visibility = View.GONE
 
         setHasOptionsMenu(true)
@@ -59,16 +64,18 @@ class BusinessOverview : Fragment() {
         inflater.inflate(R.menu.business_overview_menu, menu)
         //disable share option if needed
         if (getShareIntent().resolveActivity(requireActivity().packageManager) == null) disableShareOption(menu)
-        if (!viewModel.hasBusinessSelected) disableShareOption(menu)
+        if (viewModel.business.value == null) disableShareOption(menu)
     }
 
-    private fun disableShareOption(menu: Menu){
+    private fun disableShareOption(menu: Menu) {
         menu.findItem(R.id.shareBusiness).isVisible = false
     }
 
-    private fun getShareIntent() : Intent {
+    private fun getShareIntent(): Intent {
         //TODO add better sharing text things
-        return ShareCompat.IntentBuilder.from(requireActivity()).setText("placeholder Sharing Text that should be replaced soon").setType("text/plain").intent
+        return ShareCompat.IntentBuilder.from(requireActivity())
+            .setText("placeholder Sharing Text that should be replaced soon")
+            .setType("text/plain").intent
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -80,11 +87,11 @@ class BusinessOverview : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun shareBusiness(){
+    private fun shareBusiness() {
         startActivity(getShareIntent())
     }
 
-    private fun scanCode(){
+    private fun scanCode() {
         //setup scanner
         val integrator = IntentIntegrator.forSupportFragment(this)
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
@@ -93,7 +100,7 @@ class BusinessOverview : Fragment() {
         integrator.initiateScan()
     }
 
-    private fun enterCode(){
+    private fun enterCode() {
         val li = LayoutInflater.from(context)
         val promptsView: View = li.inflate(R.layout.part_code_input, null)
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
@@ -101,13 +108,21 @@ class BusinessOverview : Fragment() {
         // set part_code_input.xml to alertdialog builder
         alertDialogBuilder.setView(promptsView)
 
-        val userInput = promptsView.findViewById(R.id.codeInput) as EditText
+        val inputCode = promptsView.findViewById(R.id.codeInput) as EditText
+        val inputTable = promptsView.findViewById(R.id.tableInput) as EditText
 
         // set dialog message
         alertDialogBuilder
             .setCancelable(false)
-            .setPositiveButton("OK", { dialog, id -> viewModel.handleNewCode(userInput.text.toString())})
-            .setNegativeButton("Cancel", { dialog, id -> dialog.cancel()})
+            .setPositiveButton(
+                "OK",
+                { _, _ ->
+                    viewModel.handleManual(
+                        inputCode.text.toString(),
+                        inputTable.text.toString().toInt()
+                    )
+                })
+            .setNegativeButton("Cancel", { dialog, _ -> dialog.cancel() })
 
         // create alert dialog
         val alertDialog: AlertDialog = alertDialogBuilder.create()
@@ -120,57 +135,48 @@ class BusinessOverview : Fragment() {
         if (resultCode == Activity.RESULT_OK) {
             val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
             if (result != null) {
-                if (result.contents == null) {
-                    showLongToast("Cancelled")
-                } else {
-                    codeScanned(result.contents)
-                }
+                viewModel.handleScan(result)
             } else {
                 super.onActivityResult(requestCode, resultCode, data)
             }
         }
     }
 
-    private fun clickBttnOrder(){
-        //todo make this less of a mess
-        if(!viewModel.hasBusinessSelected) {
-            Timber.e("No businessID when trying to order")
-            return
-        }
-        if (binding.business == null){
-            Timber.e("No business in binding when trying to order")
-            return
-        }
-        if(viewModel.business.value!!.isOpen()){
-        view?.findNavController()?.navigate(
-            BusinessOverviewDirections.actionBusinessOverviewToMenu(
-                viewModel.business.value!!.businessID,
-                binding.business!!.name
-            )
-        )}else view?.findNavController()?.navigate(BusinessOverviewDirections.actionBusinessOverviewToBusinessNotOpen())
-    }
 
-    private fun codeScanned(code : String){
-        binding.apply {
-            //TODO parse code into business and table
-            Timber.i("Scanned code: %s", code)
-            viewModel.handleNewCode(code)
-        }
-    }
-
-    private fun showLongToast(message:String){
+    private fun showLongToast(message: String) {
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 
-    fun updateBusinessInfo(business: Business){
-            binding.business = business.toDTO()
-            binding.invalidateAll()
+    private fun updateBusinessInfo(business: Business) {
+        binding.business = business.toDTO()
+        binding.invalidateAll()
     }
 
-    fun updateState(ready : Boolean){
-        when (ready) {
-            true -> binding.bttnOrder.visibility = View.VISIBLE
-            false -> binding.bttnOrder.visibility = View.GONE
+    private fun updateState(state: OverviewState) {
+        binding.apply {
+            when (state) {
+                OverviewState.CODE_SUCCESS -> bttnOrder.visibility = View.VISIBLE
+                else -> bttnOrder.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun navigate(event: OverviewNavigationEvent) {
+        when (event) {
+            OverviewNavigationEvent.TO_MENU -> {
+                findNavController().navigate(
+                    BusinessOverviewDirections.actionBusinessOverviewToMenu(
+                        viewModel.business.value!!.businessID,
+                        viewModel.business.value!!.name
+                    )
+                )
+                viewModel.resetNavigation()
+            }
+            OverviewNavigationEvent.TO_NOT_OPEN -> {
+                findNavController().navigate(BusinessOverviewDirections.actionBusinessOverviewToBusinessNotOpen())
+                viewModel.resetNavigation()
+            }
+            else -> {}
         }
     }
 }

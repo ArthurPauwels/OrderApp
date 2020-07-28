@@ -26,6 +26,17 @@ object BusinessRepository : IBusinessRepository{
 
     }
 
+    override fun getBusinessByCode(code: String): Business {
+        val business = businesses.filter { it.code == code }.firstOrNull()
+        return if (business == null){
+            val newEntry = api.getBusinessWithCode(code)
+            businesses.add(newEntry)
+            newEntry
+        } else{
+            business
+        }
+    }
+
     override fun updateBusiness(business: Business) {
 
     }

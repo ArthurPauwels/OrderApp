@@ -2,13 +2,20 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="business"
             type="com.example.orderapp.model.BusinessDTO" />
+
+        <variable
+            name="businessOverviewViewModel"
+            type="com.example.orderapp.fragments.businessOverview.BusinessOverviewViewModel" />
     </data>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -18,7 +25,7 @@
                 android:id="@+id/txt_businessName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@={business.name}" />
+                android:text="@={businessOverviewViewModel.business.name}" />
 
             <TextView
                 android:id="@+id/txt_businessType"
@@ -33,7 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_margin="20sp"
-            android:text="@string/order_now"/>
+            android:onClick="@{() -> businessOverviewViewModel.orderNow()}"
+            android:text="@string/order_now" />
     </FrameLayout>
 
 </layout>
