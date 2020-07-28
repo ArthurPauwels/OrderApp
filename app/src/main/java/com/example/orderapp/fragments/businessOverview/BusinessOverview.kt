@@ -44,10 +44,7 @@ class BusinessOverview : Fragment() {
         )
         binding.businessOverviewViewModel = viewModel
         binding.showPrompt = View.GONE
-        //binding.showInfo = View.GONE
-
-        //setup buttons
-        binding.bttnOrder.visibility = View.GONE
+        binding.showInfo = View.GONE
 
         setHasOptionsMenu(true)
 
@@ -149,7 +146,6 @@ class BusinessOverview : Fragment() {
                 OverviewState.SCAN_FAIL -> showPrompt(getString(R.string.scan_failed), getString(R.string.try_scan_again))
                 OverviewState.MANUAL_FAIL -> showPrompt(getString(R.string.code_not_recognised), getString(
                                     R.string.code_not_recognised_prompt))
-                else -> bttnOrder.visibility = View.GONE
             }
             invalidateAll()
         }
@@ -159,6 +155,7 @@ class BusinessOverview : Fragment() {
         binding.apply {
             bttnOrder.visibility = View.VISIBLE
             showPrompt = View.GONE
+            showInfo = View.VISIBLE
         }
     }
 
@@ -166,6 +163,7 @@ class BusinessOverview : Fragment() {
         binding.apply {
             title = titleText
             prompt = promptText
+            showInfo = View.GONE
             showPrompt = View.VISIBLE
         }
     }

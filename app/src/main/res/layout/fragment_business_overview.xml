@@ -18,6 +18,9 @@
         <variable
             name="showPrompt"
             type="int" />
+        <variable
+            name="showInfo"
+            type="int" />
     </data>
 
     <FrameLayout
@@ -34,35 +37,68 @@
                 android:id="@+id/txt_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:textAlignment="center"
                 android:text="@={title}"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:visibility="@{showPrompt}" />
 
             <TextView
                 android:id="@+id/txt_prompt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:textAlignment="center"
                 android:text="@={prompt}"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:visibility="@{showPrompt}" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="@{showInfo}">
             <TextView
                 android:id="@+id/txt_businessName"
                 android:layout_width="match_parent"
-                android:layout_gravity="center"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:layout_marginBottom="30sp"
                 android:layout_height="wrap_content"
-                android:text="@={businessOverviewViewModel.business.name}" />
+                android:text="@={businessOverviewViewModel.business.name}"/>
             <TextView
                 android:id="@+id/txt_businessType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:text="@={businessOverviewViewModel.business.description}" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+                <TextView
+                    android:id="@+id/txt_rating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:text="@{businessOverviewViewModel.ratingString}"
+                    android:padding="5sp"
+                    android:layout_margin="3sp"
+                    android:background="@drawable/small_info_border"/>
+                <TextView
+                    android:id="@+id/txt_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:text="@{businessOverviewViewModel.tableString}"
+                    android:padding="5sp"
+                    android:layout_margin="3sp"
+                    android:background="@drawable/small_info_border"/>
+            </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -91,7 +127,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="@{() -> businessOverviewViewModel.orderNow()}"
-                android:text="@string/order_now" />
+                android:text="@string/order_now"
+                android:visibility="@{showInfo}" />
         </LinearLayout>
 
 

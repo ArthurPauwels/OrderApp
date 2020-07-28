@@ -22,20 +22,20 @@ class BusinessOverviewViewModel : ViewModel() {
     private val _overviewState = MutableLiveData<OverviewState>()
     val overviewState : LiveData<OverviewState> get() = _overviewState
 
-    val ratingString = Transformations.map(business) { b ->
-        if (business.value?.rating == null) {
-            "no rating"
-        }else {
-            "${business.value?.rating} / 5"
-        }
-    }
+    val ratingString :LiveData<String> = Transformations.map(business) { b -> getRatingString(b.rating) }
 
-    val tableString = Transformations.map(_table) { table ->
-        "Table: ${table}"
-    }
+    val tableString : LiveData<String> = Transformations.map(_table) { table -> "Table: ${table}" }
 
     init {
         _overviewState.value = OverviewState.INITIAL
+    }
+
+    private fun getRatingString(rating: Int?) : String{
+        if (rating == null) {
+            return "no rating"
+        }else {
+            return "${rating} / 5"
+        }
     }
 
     fun handleScan(scanResult: IntentResult) {
