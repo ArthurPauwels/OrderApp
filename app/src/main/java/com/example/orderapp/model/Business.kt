@@ -16,10 +16,6 @@ class Business (
 
     var rating : Int? = null
 ) {
-    fun toDTO() : BusinessDTO{
-        return BusinessDTO(name, type.toString())
-    }
-
     @SuppressLint("DefaultLocale")
     fun isOpen() : Boolean{
         val weekday = Calendar.getInstance().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)

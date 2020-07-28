@@ -10,4 +10,10 @@
     <string name="history">history</string>
     <string name="enter_code_input">Enter code :</string>
     <string name="enter_table_number">Enter Table number :</string>
+    <string name="scan_failed">Scan failed</string>
+    <string name="try_scan_again">The code you tried to scan was not recognised, please try to scan again or enter the code manually</string>
+    <string name="welcome">Welcome</string>
+    <string name="get_started_prompt">Scan or enter a code to get started</string>
+    <string name="code_not_recognised">Code not recognised</string>
+    <string name="code_not_recognised_prompt">The code or table number you have entered was not recognised. Try entering the code again or use your camera to scan the code</string>
 </resources>

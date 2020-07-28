@@ -4,12 +4,20 @@
     <data>
 
         <variable
-            name="business"
-            type="com.example.orderapp.model.BusinessDTO" />
-
-        <variable
             name="businessOverviewViewModel"
             type="com.example.orderapp.fragments.businessOverview.BusinessOverviewViewModel" />
+
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="prompt"
+            type="String" />
+
+        <variable
+            name="showPrompt"
+            type="int" />
     </data>
 
     <FrameLayout
@@ -19,29 +27,74 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="10sp"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@={title}"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:visibility="@{showPrompt}" />
+
+            <TextView
+                android:id="@+id/txt_prompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@={prompt}"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="@{showPrompt}" />
 
             <TextView
                 android:id="@+id/txt_businessName"
                 android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_marginBottom="30sp"
                 android:layout_height="wrap_content"
                 android:text="@={businessOverviewViewModel.business.name}" />
-
             <TextView
                 android:id="@+id/txt_businessType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@={business.type}" />
+                android:layout_gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@={businessOverviewViewModel.business.description}" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/bttnOrder"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_margin="20sp"
-            android:onClick="@{() -> businessOverviewViewModel.orderNow()}"
-            android:text="@string/order_now" />
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/bttnScan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/scan_code"
+                android:visibility="@{showPrompt}" />
+
+            <Button
+                android:id="@+id/bttnCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_code"
+                android:visibility="@{showPrompt}" />
+
+            <Button
+                android:id="@+id/bttnOrder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> businessOverviewViewModel.orderNow()}"
+                android:text="@string/order_now" />
+        </LinearLayout>
+
+
     </FrameLayout>
 
 </layout>

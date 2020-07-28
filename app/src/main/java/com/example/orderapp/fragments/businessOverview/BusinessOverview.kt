@@ -1,7 +1,6 @@
 package com.example.orderapp.fragments.businessOverview
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -14,14 +13,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.orderapp.R
 import com.example.orderapp.databinding.FragmentBusinessOverviewBinding
-import com.example.orderapp.model.Business
-import com.example.orderapp.model.BusinessDTO
 import com.google.zxing.integration.android.IntentIntegrator
-import timber.log.Timber
 
 
 class BusinessOverview : Fragment() {
@@ -39,7 +34,6 @@ class BusinessOverview : Fragment() {
         //setup viewModel
         viewModel = ViewModelProvider(this).get(BusinessOverviewViewModel::class.java)
         //observe
-        viewModel.business.observe(viewLifecycleOwner, Observer { it -> updateBusinessInfo(it) })
         viewModel.overviewState.observe(viewLifecycleOwner, Observer { it -> updateState(it) })
         viewModel.navigationEvent.observe(viewLifecycleOwner, Observer { it -> navigate(it) })
 
@@ -48,8 +42,9 @@ class BusinessOverview : Fragment() {
             inflater,
             R.layout.fragment_business_overview, container, false
         )
-        binding.business = BusinessDTO()
         binding.businessOverviewViewModel = viewModel
+        binding.showPrompt = View.GONE
+        //binding.showInfo = View.GONE
 
         //setup buttons
         binding.bttnOrder.visibility = View.GONE
@@ -74,7 +69,7 @@ class BusinessOverview : Fragment() {
     private fun getShareIntent(): Intent {
         //TODO add better sharing text things
         return ShareCompat.IntentBuilder.from(requireActivity())
-            .setText("placeholder Sharing Text that should be replaced soon")
+            .setText("placeholder Sharing Text that should be replaced some time")
             .setType("text/plain").intent
     }
 
@@ -142,22 +137,36 @@ class BusinessOverview : Fragment() {
         }
     }
 
-
     private fun showLongToast(message: String) {
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
-    }
-
-    private fun updateBusinessInfo(business: Business) {
-        binding.business = business.toDTO()
-        binding.invalidateAll()
     }
 
     private fun updateState(state: OverviewState) {
         binding.apply {
             when (state) {
-                OverviewState.CODE_SUCCESS -> bttnOrder.visibility = View.VISIBLE
+                OverviewState.INITIAL -> showPrompt(getString(R.string.welcome), getString(R.string.get_started_prompt))
+                OverviewState.CODE_SUCCESS -> onScanSuccess()
+                OverviewState.SCAN_FAIL -> showPrompt(getString(R.string.scan_failed), getString(R.string.try_scan_again))
+                OverviewState.MANUAL_FAIL -> showPrompt(getString(R.string.code_not_recognised), getString(
+                                    R.string.code_not_recognised_prompt))
                 else -> bttnOrder.visibility = View.GONE
             }
+            invalidateAll()
+        }
+    }
+
+    private fun onScanSuccess(){
+        binding.apply {
+            bttnOrder.visibility = View.VISIBLE
+            showPrompt = View.GONE
+        }
+    }
+
+    private fun showPrompt(titleText: String, promptText: String){
+        binding.apply {
+            title = titleText
+            prompt = promptText
+            showPrompt = View.VISIBLE
         }
     }
 

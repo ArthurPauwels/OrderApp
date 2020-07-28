@@ -2,6 +2,7 @@ package com.example.orderapp.fragments.businessOverview
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.example.orderapp.data.repositories.BusinessRepository
 import com.example.orderapp.model.Business
@@ -20,6 +21,22 @@ class BusinessOverviewViewModel : ViewModel() {
 
     private val _overviewState = MutableLiveData<OverviewState>()
     val overviewState : LiveData<OverviewState> get() = _overviewState
+
+    val ratingString = Transformations.map(business) { b ->
+        if (business.value?.rating == null) {
+            "no rating"
+        }else {
+            "${business.value?.rating} / 5"
+        }
+    }
+
+    val tableString = Transformations.map(_table) { table ->
+        "Table: ${table}"
+    }
+
+    init {
+        _overviewState.value = OverviewState.INITIAL
+    }
 
     fun handleScan(scanResult: IntentResult) {
         if (scanResult.contents == null) {
