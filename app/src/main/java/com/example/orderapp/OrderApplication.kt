@@ -8,7 +8,6 @@ class OrderApplication : Application(){
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
-        ServiceLocator.setup(applicationContext)
     }
 
 }

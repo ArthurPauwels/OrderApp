@@ -2,18 +2,15 @@ package com.example.orderapp.fragments.businessOverview
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.orderapp.ServiceLocator
-import com.example.orderapp.data.database.BusinessDatabaseDAO
+import com.example.orderapp.data.database.getDatabase
 import com.example.orderapp.data.repositories.BusinessRepository
 import com.example.orderapp.model.Business
 import com.google.zxing.integration.android.IntentResult
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.net.ConnectException
 
-class BusinessOverviewViewModel : ViewModel() {
-
-    private val _business = MutableLiveData<Business>()
-    val business: LiveData<Business> get() = _business
+class BusinessOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _navigationEvent = MutableLiveData<OverviewNavigationEvent>()
     val navigationEvent: LiveData<OverviewNavigationEvent> get() = _navigationEvent
@@ -23,14 +20,15 @@ class BusinessOverviewViewModel : ViewModel() {
     private val _overviewState = MutableLiveData<OverviewState>()
     val overviewState : LiveData<OverviewState> get() = _overviewState
 
+    private val viewModelJob = SupervisorJob()
+    private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
+
+    private val database = getDatabase(application)
+    private val repository = BusinessRepository(database)
+
+    val business = repository.currentBusiness
     val ratingString :LiveData<String> = Transformations.map(business) { b -> getRatingString(b.rating) }
-
     val tableString : LiveData<String> = Transformations.map(_table) { table -> "Table: ${table}" }
-
-    private val repository = ServiceLocator.repository()
-
-    private var job = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + job)
 
     init {
         _overviewState.value = OverviewState.INITIAL
@@ -45,42 +43,44 @@ class BusinessOverviewViewModel : ViewModel() {
     }
 
     fun handleScan(scanResult: IntentResult) {
-
-        if (scanResult.contents == null) {
+        val contents = scanResult.contents.split(',')
+        val id = contents.first()
+        if (!scanResult.contents.contains(',')) {
             _overviewState.value = OverviewState.SCAN_FAIL
         } else {
-            Timber.i("Scanned: %s", scanResult)
-            _table.value = 1 //todo get table info out of qr code
-            uiScope.launch {
-                switchBusiness(getBusinessFromRepository(scanResult.contents).value!!)
+            viewModelScope.launch {
+                Timber.i("Scanned: %s", scanResult)
+                _overviewState.value = OverviewState.NETWORK_BUSY
+                _table.value = contents[1].trim().toInt()
+                try {
+                    repository.refreshCurrentBusinessByID(id)
+                }
+                catch (e: ConnectException){
+                    Timber.w(e)
+                    _overviewState.value = OverviewState.NETWORK_FAIL
+                }
+                _overviewState.value = OverviewState.CODE_SUCCESS
             }
         }
-
     }
 
-    private suspend fun getBusinessFromRepository(id: String) : LiveData<Business>{
-        return withContext(Dispatchers.IO){
-            repository.getBusinessByID(id)
+    fun handleManual(code: String, table: Int?) {
+        viewModelScope.launch {
+            Timber.i("Entered: %s", code)
+            _overviewState.value = OverviewState.NETWORK_BUSY
+            try {
+                repository.refreshCurrentBusinessByCode(code)
+            }
+            catch (e: ConnectException){
+                Timber.w(e)
+                _overviewState.value = OverviewState.NETWORK_FAIL
+            }
+            _table.value = table
+            _overviewState.value = OverviewState.CODE_SUCCESS
         }
-    }
-
-    fun handleManual(code: String, table: Int) {
-        Timber.i("Entered: %s", code)
-        val business = repository.getBusinessByCode(code)
-        _table.value = table
-        switchBusiness(business.value!!)
-    }
-
-    private fun switchBusiness(business: Business) {
-        _business.value = business
-        _overviewState.value = OverviewState.CODE_SUCCESS
     }
 
     fun orderNow() {
-        if (_business.value == null) {
-            Timber.e("No businessID when trying to order")
-            return
-        }
         if (business.value == null) {
             Timber.e("No business in binding when trying to order")
             return
@@ -97,12 +97,12 @@ class BusinessOverviewViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        job.cancel()
+        viewModelJob.cancel()
     }
 }
 
 enum class OverviewState {
-    INITIAL, CODE_SUCCESS, SCAN_FAIL, MANUAL_FAIL
+    INITIAL, CODE_SUCCESS, SCAN_FAIL, MANUAL_FAIL, NETWORK_FAIL, NETWORK_BUSY
 }
 
 enum class OverviewNavigationEvent {

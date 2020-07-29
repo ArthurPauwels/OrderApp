@@ -6,37 +6,17 @@ import androidx.room.*
 import java.util.*
 import kotlin.collections.HashSet
 
-@Entity(tableName = "business_table")
 data class Business (
-    @PrimaryKey
-    @ColumnInfo(name = "business_id")
     var businessID : String,
-
-    @ColumnInfo(name = "readable_code")
     var code : String,
-
-    @ColumnInfo(name = "name")
     var name : String,
-
-    //@ColumnInfo(name = "business_type")
-    @Ignore
     var type : BusinessType,
-
-    @ColumnInfo(name = "description")
     var description : String,
-
-    //@ColumnInfo(name = "amenities")
-    @Ignore
-    var amenities : Set<String> = HashSet<String>(),
-
-    @Ignore
+    //var amenities : Set<String> = HashSet<String>(),
+    //var paymentMethods : List<Map<String, String>>,
     var openingHours : OpeningHours,
-
-    @ColumnInfo(name = "ratingDB")
     var rating : Int? = null
 ) {
-    constructor(businessID: String, code: String, name: String, description: String, rating: Int?):this(businessID, code, name, BusinessType.RESTAURANT, description, HashSet<String>(), OpeningHours.getSampleHours(), rating)
-
     @SuppressLint("DefaultLocale")
     fun isOpen() : Boolean{
         val weekday = Calendar.getInstance().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)
@@ -70,36 +50,19 @@ enum class BusinessType(val type : String) {
 
 }
 
-//@Entity(tableName = "opening_hours_table")
 class OpeningHours(
-    //@PrimaryKey(autoGenerate = true)
-    //var hoursId : Long = 0L,
-
-    //@ColumnInfo(name = "monday")
     val monday : List<Pair<Int, Int>>,
-
-    //@ColumnInfo(name = "tuesday")
     val tuesday : List<Pair<Int, Int>>,
-
-    //@ColumnInfo(name = "wednesday")
     val wednesday : List<Pair<Int, Int>>,
-
-    //@ColumnInfo(name = "thursday")
     val thursday : List<Pair<Int, Int>>,
-
-    //@ColumnInfo(name = "friday")
     val friday : List<Pair<Int, Int>>,
-
-    //@ColumnInfo(name = "saturday")
     val saturday : List<Pair<Int, Int>>,
-
-    //@ColumnInfo(name = "sunday")
     val sunday : List<Pair<Int, Int>>
 ){
     companion object{
         //todo remove this shit
         fun getSampleHours() : OpeningHours {
-            val daily = parseOpeningHours("12:00 - 13:00")
+            val daily = parseOpeningHours("12:00 - 20:00")
             return OpeningHours(daily, daily, daily, daily, daily, daily, daily)
         }
         fun parseOpeningHours(openingHoursString: String): List<Pair<Int, Int>>{

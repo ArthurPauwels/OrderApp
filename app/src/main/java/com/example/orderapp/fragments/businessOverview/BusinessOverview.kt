@@ -12,16 +12,21 @@ import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.orderapp.R
 import com.example.orderapp.data.database.BusinessDatabase
 import com.example.orderapp.databinding.FragmentBusinessOverviewBinding
 import com.google.zxing.integration.android.IntentIntegrator
+import java.lang.NumberFormatException
 
 
 class BusinessOverview : Fragment() {
 
-    lateinit var viewModel: BusinessOverviewViewModel
+    private val viewModel: BusinessOverviewViewModel by lazy {
+        ViewModelProvider(this).get(BusinessOverviewViewModel::class.java)
+    }
+
     lateinit var binding: FragmentBusinessOverviewBinding
 
     override fun onCreateView(
@@ -30,9 +35,6 @@ class BusinessOverview : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         super.onCreate(savedInstanceState)
-        val app = requireNotNull(this.activity).application
-
-        viewModel = BusinessOverviewViewModel()
 
         //observe
         viewModel.overviewState.observe(viewLifecycleOwner, Observer { it -> updateState(it) })
@@ -113,13 +115,17 @@ class BusinessOverview : Fragment() {
         alertDialogBuilder
             .setCancelable(false)
             .setPositiveButton(
-                "OK",
-                { _, _ ->
-                    viewModel.handleManual(
-                        inputCode.text.toString(),
-                        inputTable.text.toString().toInt()
-                    )
-                })
+                "OK"
+            ) { _, _ ->
+                var table : Int? = null
+                try {
+                    table = inputTable.text.toString().toInt()
+                } catch (e : NumberFormatException){}
+                viewModel.handleManual(
+                    inputCode.text.toString(),
+                    table
+                )
+            }
             .setNegativeButton("Cancel", { dialog, _ -> dialog.cancel() })
 
         // create alert dialog
@@ -152,6 +158,8 @@ class BusinessOverview : Fragment() {
                 OverviewState.SCAN_FAIL -> showPrompt(getString(R.string.scan_failed), getString(R.string.try_scan_again))
                 OverviewState.MANUAL_FAIL -> showPrompt(getString(R.string.code_not_recognised), getString(
                                     R.string.code_not_recognised_prompt))
+                OverviewState.NETWORK_BUSY -> showPrompt("", "loading")
+                OverviewState.NETWORK_FAIL -> showPrompt("Failed to connect to server", "Something went wrong while trying to communicate with our server. Check your device's network connection.")
             }
             invalidateAll()
         }
