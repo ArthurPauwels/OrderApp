@@ -60,7 +60,7 @@ class OpeningHours(
     companion object{
         //todo remove this shit
         fun getSampleHours() : OpeningHours {
-            val daily = parseOpeningHours("12:00 - 20:00")
+            val daily = parseOpeningHours("12:00 - 21:00")
             return OpeningHours(daily, daily, daily, daily, daily, daily, daily)
         }
         fun parseOpeningHours(openingHoursString: String): List<Pair<Int, Int>>{

@@ -28,7 +28,7 @@ class Menu : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu, container, false)
         binding.menuList.adapter = adapter
         viewModel.categories.observe(viewLifecycleOwner, Observer {
-            it?.let { adapter.data = it }
+            it?.let { adapter.flattenCategoryListIntoMenuListItemList(it)}
         })
         binding.setLifecycleOwner(this)
         binding.viewModel = viewModel
