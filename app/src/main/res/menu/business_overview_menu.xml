@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/scanCode"
-        android:icon="@drawable/ic_qr_code_scanner_black_24dp"
+        android:icon="@drawable/ic_qr_code_scanner_white_24dp"
         android:title="@string/scan_code"
         app:showAsAction="always" />
     <item
