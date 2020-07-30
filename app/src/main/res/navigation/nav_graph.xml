@@ -32,7 +32,7 @@
         tools:layout="@layout/fragment_business_not_open" />
     <fragment
         android:id="@+id/menu"
-        android:name="com.example.orderapp.fragments.Menu"
+        android:name="com.example.orderapp.fragments.menu.Menu"
         android:label="fragment_menu"
         tools:layout="@layout/fragment_menu" >
         <argument

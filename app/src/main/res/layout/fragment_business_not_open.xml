@@ -9,18 +9,11 @@
 
     <ImageView
         android:id="@+id/clockImage"
+        android:layout_margin="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_recent_history"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_baseline_access_time_24"
         android:contentDescription="@string/clock"/>
-
-    <TextView
-        android:id="@+id/txtOpeningHours"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="13:00 - 22:00"
-        android:textAlignment="center"
-        />
 
     <TextView
         android:id="@+id/txtCannotOrder"

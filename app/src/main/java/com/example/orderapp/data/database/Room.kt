@@ -3,7 +3,6 @@ package com.example.orderapp.data.database
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.orderapp.model.Business
 
 @Dao
 interface BusinessDatabaseDAO {

@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.orderapp.data.database.getDatabase
 import com.example.orderapp.data.repositories.BusinessRepository
-import com.example.orderapp.model.Business
 import com.google.zxing.integration.android.IntentResult
 import kotlinx.coroutines.*
 import timber.log.Timber

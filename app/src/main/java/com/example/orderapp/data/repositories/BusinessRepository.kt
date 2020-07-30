@@ -5,10 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.example.orderapp.data.database.BusinessDatabase
 import com.example.orderapp.data.database.asDomainModel
-import com.example.orderapp.data.network.BusinessAPI
-import com.example.orderapp.data.network.asDataModel
-import com.example.orderapp.data.network.asDomainModel
-import com.example.orderapp.model.Business
+import com.example.orderapp.data.network.*
+import com.example.orderapp.domain.Business
+import com.example.orderapp.domain.MenuCategory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -18,6 +17,9 @@ class BusinessRepository(
 
     val _currentBusiness = MutableLiveData<Business>()
     val currentBusiness : LiveData<Business> get() = _currentBusiness
+
+    val _currentCategories = MutableLiveData<List<MenuCategory>>()
+    val currentCategories : LiveData<List<MenuCategory>> get() = _currentCategories
 
     private val businesses = Transformations.map(database.businessDAO.getAll(), {
         it.asDomainModel()
@@ -55,4 +57,15 @@ class BusinessRepository(
         }
     }
 
+    suspend fun getMenuCategoryAndItemsForBusiness(id : String){
+        withContext(Dispatchers.IO){
+            //I know this is terrible API architecture, but this is me dealing with it... this should have been a singular call
+            val fromApi = BusinessAPI.retrofitService.getCategoriesById(id).await()
+            val categories = fromApi.categoryAsDomainModel()
+            categories.forEach {category ->
+                category.menuItems = BusinessAPI.retrofitService.getMenuItmesById(category.categoryId).await().menuItemAsDomainModel()
+            }
+            _currentCategories.postValue(categories)
+        }
+    }
 }

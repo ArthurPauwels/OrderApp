@@ -33,6 +33,12 @@ interface BusinessAPIService {
 
     @GET("restaurants/human/{code}")
     fun findBusinessWithCode(@Path("code") readableCode : String) : Deferred<BusinessDTO>
+
+    @GET("categories/restaurant/{id}")
+    fun getCategoriesById(@Path("id")businessId : String) : Deferred<List<CategoryDTO>>
+
+    @GET("menuitems/category/{id}")
+    fun getMenuItmesById(@Path("id")categoryId : String) : Deferred<List<MenuItemDTO>>
 }
 
 object BusinessAPI{

@@ -1,9 +1,7 @@
 package com.example.orderapp.data.network
 
 import com.example.orderapp.data.database.BusinessDBE
-import com.example.orderapp.model.Business
-import com.example.orderapp.model.BusinessType
-import com.example.orderapp.model.OpeningHours
+import com.example.orderapp.domain.*
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
@@ -17,6 +15,26 @@ data class BusinessDTO constructor(
     //val paymentMethods: Map<String, String>,
     //val amenities: Array<String>,
     //val openingHours: List<Array<String>>
+)
+
+@JsonClass(generateAdapter = true)
+data class CategoryDTO constructor(
+    @Json(name = "_id")
+    val categoryId : String,
+    val name : String,
+    @Json(name = "_restoId")
+    val BusinessId : String
+)
+
+@JsonClass(generateAdapter = true)
+data class MenuItemDTO constructor(
+    @Json(name = "_id")
+    val menuItemId : String,
+    val name: String,
+    val description: String,
+    val price : Double,
+    @Json(name = "_categoryId")
+    val categoryId: String
 )
 
 fun BusinessDTO.asDomainModel(): Business {
@@ -50,5 +68,26 @@ fun BusinessDTO.asDataModel(): BusinessDBE {
         sundayHours = "12:00 - 20:00",
         rating = null
     )
+}
+
+fun List<MenuItemDTO>.menuItemAsDomainModel(): List<MenuItem> {
+    return map {
+        MenuItem(
+            menuItemId = it.menuItemId,
+            name = it.name,
+            description = it.description,
+            price = it.price
+        )
+    }
+}
+
+fun List<CategoryDTO>.categoryAsDomainModel(): List<MenuCategory>{
+    return map {
+        MenuCategory(
+            categoryId = it.categoryId,
+            name = it.name,
+            menuItems = listOf()
+        )
+    }
 }
 

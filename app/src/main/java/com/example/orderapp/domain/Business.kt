@@ -1,10 +1,8 @@
-package com.example.orderapp.model
+package com.example.orderapp.domain
 
 import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
-import androidx.room.*
 import java.util.*
-import kotlin.collections.HashSet
 
 data class Business (
     var businessID : String,
