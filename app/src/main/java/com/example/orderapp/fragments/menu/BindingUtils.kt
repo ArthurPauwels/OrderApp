@@ -26,3 +26,8 @@ fun TextView.setMenuItemPrice(item: MenuItem?){
 fun  TextView.setMenuItemDescription(item: MenuItem?){
     item?.let { text = item.description }
 }
+
+@BindingAdapter("menuItemAmount")
+fun TextView.setMenuItemAmount(item: MenuItem?){
+    item?.let { text = item.amount.toString() }
+}

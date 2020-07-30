@@ -2,12 +2,8 @@ package com.example.orderapp.fragments.menu
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.example.orderapp.data.database.BusinessDatabase
 import com.example.orderapp.data.database.getDatabase
 import com.example.orderapp.data.repositories.BusinessRepository
-import com.example.orderapp.domain.MenuCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,6 +22,14 @@ class MenuViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             repository.getMenuCategoryAndItemsForBusiness(businessId)
         }
+    }
+
+    fun handleRemoveMenuItem(menuItemId : String){
+        repository.removeOneFrom(menuItemId)
+    }
+
+    fun handleAddMenuItem(menuItemId: String){
+        repository.addOneTo(menuItemId)
     }
 
     override fun onCleared() {

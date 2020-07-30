@@ -12,7 +12,12 @@ import com.example.orderapp.R
 import com.example.orderapp.databinding.FragmentMenuBinding
 
 class Menu : Fragment() {
-    val adapter = MenuAdapter()
+    val adapter = MenuAdapter(MenuItemListener { menuItemID, action ->
+        when (action){
+            MenuItemAction.ADD_ONE -> viewModel.handleAddMenuItem(menuItemID)
+            MenuItemAction.REMOVE_ONE -> viewModel.handleRemoveMenuItem(menuItemID)
+        }
+    })
 
     lateinit var binding : FragmentMenuBinding
     private val viewModel : MenuViewModel by lazy { ViewModelProvider(this).get(MenuViewModel::class.java) }

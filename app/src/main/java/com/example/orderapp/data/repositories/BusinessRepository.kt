@@ -68,4 +68,25 @@ class BusinessRepository(
             _currentCategories.postValue(categories)
         }
     }
+
+    fun addOneTo(menuItemId : String){
+        var value = currentCategories.value
+        value?.forEach { category ->
+            category.menuItems.forEach{ menuItem ->
+                if (menuItem.menuItemId == menuItemId)
+                    menuItem.amount = menuItem.amount + 1
+            }
+        }
+        _currentCategories.postValue(value)
+    }
+
+    fun removeOneFrom(menuItemId: String){
+        var value = currentCategories.value
+        value?.forEach { category ->
+            category.menuItems.forEach{ menuItem ->
+                if (menuItem.menuItemId == menuItemId && menuItem.amount > 0) menuItem.amount = menuItem.amount -1
+            }
+        }
+        _currentCategories.postValue(value)
+    }
 }

@@ -2,25 +2,22 @@ package com.example.orderapp.fragments.menu
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.orderapp.R
 import com.example.orderapp.databinding.ListItemCategoryBinding
 import com.example.orderapp.databinding.ListItemMenuItemBinding
 import com.example.orderapp.domain.MenuCategory
 import com.example.orderapp.domain.MenuItem
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import timber.log.Timber
 import java.lang.ClassCastException
+import java.lang.Exception
 
 private const val ITEM_VIEW_TYPE_CATEGORY = 0
 private const val ITEM_VIEW_TYPE_MENU_ITEM = 1
 
-class MenuAdapter : ListAdapter<MenuListItem, RecyclerView.ViewHolder>(MenuDiffCallBack()) {
+class MenuAdapter(val clickListener: MenuItemListener) : ListAdapter<MenuListItem, RecyclerView.ViewHolder>(MenuDiffCallBack()) {
 
     private val adapterScope = CoroutineScope(Dispatchers.Default)
 
@@ -60,7 +57,7 @@ class MenuAdapter : ListAdapter<MenuListItem, RecyclerView.ViewHolder>(MenuDiffC
             }
             is MenuItemViewHolder -> {
                 val menuItem = getItem(position) as  MenuListItem.MenuItemListItem
-                holder.bind(menuItem.menuItem)
+                holder.bind(menuItem.menuItem, clickListener)
             }
         }
     }
@@ -81,8 +78,12 @@ class MenuAdapter : ListAdapter<MenuListItem, RecyclerView.ViewHolder>(MenuDiffC
     }
 
     class MenuItemViewHolder private constructor(val binding: ListItemMenuItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(item: MenuItem) {
+        fun bind(
+            item: MenuItem,
+            clickListener: MenuItemListener
+        ) {
             binding.menuItem = item
+            binding.clickListener = clickListener
             binding.executePendingBindings()
         }
 
@@ -102,19 +103,28 @@ class MenuDiffCallBack : DiffUtil.ItemCallback<MenuListItem>(){
     }
 
     override fun areContentsTheSame(oldItem: MenuListItem, newItem: MenuListItem): Boolean {
-        return oldItem.equals(newItem)
+        return oldItem == newItem
     }
 
+}
+
+class MenuItemListener(val clickListener: (menuItemID : String, action : MenuItemAction) -> Unit){
+    fun onClickRemove(item : MenuItem) = clickListener(item.menuItemId, MenuItemAction.REMOVE_ONE)
+    fun onClickAdd(item: MenuItem) = clickListener(item.menuItemId, MenuItemAction.ADD_ONE)
+}
+
+enum class MenuItemAction{
+    ADD_ONE, REMOVE_ONE
 }
 
 sealed class MenuListItem{
     data class CategoryListItem(val category: MenuCategory) : MenuListItem(){
         override val id: Long
-            get() = category.categoryId.toLong(16)
+            get() = StringBuilder(category.categoryId.toUpperCase()).removeRange(0, 10).toString().toLong(16)
     }
     data class MenuItemListItem(val menuItem: MenuItem) : MenuListItem(){
         override val id: Long
-            get() = menuItem.menuItemId.toLong(16)
+            get() = StringBuilder(menuItem.menuItemId.toUpperCase()).removeRange(0, 10).toString().toLong(16)
     }
 
     abstract val id : Long

@@ -4,6 +4,7 @@ class MenuItem (
     val menuItemId : String,
     val name : String,
     val description : String,
-    val price : Double
+    val price : Double,
+    var amount : Int = 0
 ){
 }
