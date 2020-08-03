@@ -4,6 +4,8 @@ import androidx.room.*
 import com.example.orderapp.domain.Business
 import com.example.orderapp.domain.BusinessType
 import com.example.orderapp.domain.OpeningHours
+import com.example.orderapp.domain.Order
+import java.util.*
 
 @Entity(tableName = "business_table")
 data class BusinessDBE constructor(

@@ -33,7 +33,9 @@ class Menu : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu, container, false)
         binding.menuList.adapter = adapter
         viewModel.categories.observe(viewLifecycleOwner, Observer {
+            //TODO never gets to this... so the view never gets updated
             it?.let { adapter.flattenCategoryListIntoMenuListItemList(it)}
+            //adapter.notifyDataSetChanged()
         })
         binding.setLifecycleOwner(this)
         binding.viewModel = viewModel

@@ -8,6 +8,8 @@ import com.example.orderapp.data.database.asDomainModel
 import com.example.orderapp.data.network.*
 import com.example.orderapp.domain.Business
 import com.example.orderapp.domain.MenuCategory
+import com.example.orderapp.domain.MenuItem
+import com.example.orderapp.domain.Order
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -15,11 +17,14 @@ class BusinessRepository(
     private val database : BusinessDatabase
 ) {
 
-    val _currentBusiness = MutableLiveData<Business>()
+    private val _currentBusiness = MutableLiveData<Business>()
     val currentBusiness : LiveData<Business> get() = _currentBusiness
 
-    val _currentCategories = MutableLiveData<List<MenuCategory>>()
+    private val _currentCategories = MutableLiveData<List<MenuCategory>>()
     val currentCategories : LiveData<List<MenuCategory>> get() = _currentCategories
+
+    private val _currentOrder = MutableLiveData<Order>()
+    val currentOrder : LiveData<Order> get() = _currentOrder
 
     private val businesses = Transformations.map(database.businessDAO.getAll(), {
         it.asDomainModel()
@@ -31,10 +36,8 @@ class BusinessRepository(
             if (found == null) {
                 val fromApi = BusinessAPI.retrofitService.getBusiness(id).await()
                 found = fromApi.asDomainModel()
-                if (found != null) {
-                    database.businessDAO.insertAll(fromApi.asDataModel())
-                    _currentBusiness.postValue(found)
-                }
+                database.businessDAO.insertAll(fromApi.asDataModel())
+                _currentBusiness.postValue(found)
             }else {
                 _currentBusiness.postValue(found)
             }
@@ -47,10 +50,8 @@ class BusinessRepository(
             if (found == null) {
                 val fromApi = BusinessAPI.retrofitService.findBusinessWithCode(code).await()
                 found = fromApi.asDomainModel()
-                if (found != null) {
-                    database.businessDAO.insertAll(fromApi.asDataModel())
-                    _currentBusiness.postValue(found)
-                }
+                database.businessDAO.insertAll(fromApi.asDataModel())
+                _currentBusiness.postValue(found)
             }else {
                 _currentBusiness.postValue(found)
             }
@@ -69,24 +70,43 @@ class BusinessRepository(
         }
     }
 
-    fun addOneTo(menuItemId : String){
-        var value = currentCategories.value
-        value?.forEach { category ->
-            category.menuItems.forEach{ menuItem ->
-                if (menuItem.menuItemId == menuItemId)
-                    menuItem.amount = menuItem.amount + 1
+    fun addOneToOrder(menuItemId : String){
+        removeOrAddOneToOrder(menuItemId, true)
+        _currentCategories.value?.forEach { cat ->
+            cat.menuItems.forEach { it ->
+                if (it.menuItemId == menuItemId) it.amount ++
             }
         }
-        _currentCategories.postValue(value)
     }
 
-    fun removeOneFrom(menuItemId: String){
-        var value = currentCategories.value
-        value?.forEach { category ->
-            category.menuItems.forEach{ menuItem ->
-                if (menuItem.menuItemId == menuItemId && menuItem.amount > 0) menuItem.amount = menuItem.amount -1
+    fun removeOneFromOrder(menuItemId: String){
+        removeOrAddOneToOrder(menuItemId, false)
+        _currentCategories.value?.forEach { cat ->
+            cat.menuItems.forEach { it ->
+                if (it.menuItemId == menuItemId && it.amount > 0) it.amount --
             }
         }
-        _currentCategories.postValue(value)
+    }
+
+    private fun findMenuItemInCategories(menuItemId: String) : MenuItem? {
+        currentCategories.value?.forEach { category ->
+            category.menuItems.forEach{ menuItem ->
+                if (menuItem.menuItemId == menuItemId)
+                    return menuItem
+            }
+        }
+        return null
+    }
+
+    private fun removeOrAddOneToOrder(menuItemId: String, add: Boolean){
+        val updatedOrderItems : MutableMap<MenuItem, Int> = mutableMapOf()
+        currentOrder.value?.items?.let { updatedOrderItems.putAll(it) }
+        val item = findMenuItemInCategories(menuItemId)
+        item?.let {
+            val oldAmount = updatedOrderItems.remove(it) ?: 0
+            if(add) updatedOrderItems.put(it, oldAmount + 1)
+            else { if (oldAmount > 1) updatedOrderItems.put(it, oldAmount - 1) else {} }
+        }
+        _currentOrder.postValue(Order(updatedOrderItems))
     }
 }
