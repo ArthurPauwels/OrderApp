@@ -43,8 +43,8 @@
             app:argType="string" />
     </fragment>
     <fragment
-        android:id="@+id/history"
-        android:name="com.example.orderapp.fragments.history"
+        android:id="@+id/History"
+        android:name="com.example.orderapp.fragments.History"
         android:label="fragment_history"
         tools:layout="@layout/fragment_history" />
 </navigation>

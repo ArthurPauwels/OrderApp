@@ -16,8 +16,7 @@ class BusinessNotOpen : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_business_not_open, container, false)
-
         activity?.findViewById<Toolbar>(R.id.action_bar)?.setTitle("Not open")
+        return inflater.inflate(R.layout.fragment_business_not_open, container, false)
     }
 }

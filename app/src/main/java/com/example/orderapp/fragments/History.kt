@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import com.example.orderapp.R
 
-class history : Fragment() {
+class History : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,10 +18,7 @@ class history : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false)
-
-
         activity?.findViewById<Toolbar>(R.id.action_bar)?.setTitle("Order History")
+        return inflater.inflate(R.layout.fragment_history, container, false)
     }
 }

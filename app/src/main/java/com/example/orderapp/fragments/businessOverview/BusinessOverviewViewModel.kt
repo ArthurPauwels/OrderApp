@@ -85,7 +85,7 @@ class BusinessOverviewViewModel(application: Application) : AndroidViewModel(app
             return
         }
         if (business.value!!.isOpen())
-            _navigationEvent.value = OverviewNavigationEvent.TO_MENU
+            _navigationEvent.value = OverviewNavigationEvent.TO_NOT_OPEN
         else
             _navigationEvent.value = OverviewNavigationEvent.TO_NOT_OPEN
     }

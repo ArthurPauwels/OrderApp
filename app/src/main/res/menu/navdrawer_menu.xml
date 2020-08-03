@@ -4,5 +4,5 @@
     <item
         android:icon="@android:drawable/ic_menu_recent_history"
         android:title="@string/history"
-        android:id="@+id/historyFragment"/>
+        android:id="@+id/History"/>
 </menu>
