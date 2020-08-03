@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -35,7 +36,6 @@ class BusinessOverview : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         super.onCreate(savedInstanceState)
-
         //observe
         viewModel.overviewState.observe(viewLifecycleOwner, Observer { it -> updateState(it) })
         viewModel.navigationEvent.observe(viewLifecycleOwner, Observer { it -> navigate(it) })
@@ -55,6 +55,8 @@ class BusinessOverview : Fragment() {
         binding.bttnCode.setOnClickListener { enterCode() }
 
         setHasOptionsMenu(true)
+
+        activity?.findViewById<Toolbar>(R.id.action_bar)?.setTitle("Welcome")
 
         return binding.root
     }

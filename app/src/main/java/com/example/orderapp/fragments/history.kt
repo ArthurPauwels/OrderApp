@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import com.example.orderapp.R
 
 class history : Fragment() {
@@ -19,5 +20,8 @@ class history : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_history, container, false)
+
+
+        activity?.findViewById<Toolbar>(R.id.action_bar)?.setTitle("Order History")
     }
 }

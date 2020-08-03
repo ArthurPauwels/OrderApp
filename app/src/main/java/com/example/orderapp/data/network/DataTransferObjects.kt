@@ -11,10 +11,21 @@ data class BusinessDTO constructor(
     @Json(name = "_humanId")
     val readableCode: String,
     val name: String,
-    val description: String
+    val description: String,
     //val paymentMethods: Map<String, String>,
     //val amenities: Array<String>,
-    //val openingHours: List<Array<String>>
+    val openingHours: OpeningHoursDTO
+)
+
+@JsonClass(generateAdapter = true)
+data class OpeningHoursDTO constructor(
+    val monday : String,
+    val thursday : String,
+    val wednesday : String,
+    val tuesday : String,
+    val friday : String,
+    val saturday : String,
+    val sunday : String
 )
 
 @JsonClass(generateAdapter = true)

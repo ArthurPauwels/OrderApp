@@ -22,9 +22,9 @@ class MenuViewModel(application: Application) : AndroidViewModel(application) {
 
     val categories = repository.currentCategories
     val order = repository.currentOrder
-    val orderButtonString : LiveData<String> = Transformations.map(order) {"Order: €" + it.getTotalPrice().toString()}
+    val orderButtonString : LiveData<String> = Transformations.map(order) {if (it.getTotalPrice() > 0){"Order: €" + it.getTotalPrice().toString()} else "Select items to order"}
 
-    fun handeArgs(businessId: String, businessName: String){
+    fun handeArgs(businessId: String){
         viewModelScope.launch {
             repository.getMenuCategoryAndItemsForBusiness(businessId)
         }
