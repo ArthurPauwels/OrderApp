@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragments.orderPlaced.OrderPlaced">
+
+        <Button
+            android:id="@+id/bttn_returnHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:text="@string/back_to_business_overview"
+            app:layout_constraintEnd_toEndOf="@+id/txtOrderPlaced"
+            app:layout_constraintStart_toStartOf="@+id/txtOrderPlaced"
+            app:layout_constraintTop_toBottomOf="@+id/txtSubtext" />
+
+        <TextView
+            android:id="@+id/txtOrderPlaced"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="200dp"
+            android:text="@string/order_placed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtSubtext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/you_can_now_see_your_order_in_the_order_history"
+            app:layout_constraintEnd_toEndOf="@+id/txtOrderPlaced"
+            app:layout_constraintStart_toStartOf="@+id/txtOrderPlaced"
+            app:layout_constraintTop_toBottomOf="@+id/txtOrderPlaced" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

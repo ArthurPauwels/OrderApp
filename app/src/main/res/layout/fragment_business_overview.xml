@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
         <variable
@@ -76,26 +77,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="center">
-                <TextView
-                    android:id="@+id/txt_rating"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:text="no rating"
-                    android:padding="5sp"
-                    android:layout_margin="3sp"
-                    android:background="@drawable/small_info_border"/>
+
                 <TextView
                     android:id="@+id/txt_table"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="3sp"
+                    android:background="@drawable/small_info_border"
+                    android:padding="5sp"
+                    android:text=""
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:text="table: 1"
-                    android:padding="5sp"
-                    android:layout_margin="3sp"
-                    android:background="@drawable/small_info_border"/>
+                    tools:text="Table: 1" />
             </LinearLayout>
             </LinearLayout>
         </LinearLayout>

@@ -12,8 +12,7 @@ data class Business (
     var description : String,
     //var amenities : Set<String> = HashSet<String>(),
     //var paymentMethods : List<Map<String, String>>,
-    var openingHours : OpeningHours,
-    var rating : Int? = null
+    var openingHours : OpeningHours
 ) {
     @SuppressLint("DefaultLocale")
     fun isOpen() : Boolean{

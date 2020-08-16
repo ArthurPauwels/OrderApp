@@ -1,9 +1,11 @@
 package com.example.orderapp.data.repositories
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.example.orderapp.data.database.BusinessDatabase
+import com.example.orderapp.data.database.OrderHistoryDBE
 import com.example.orderapp.data.database.asDomainModel
 import com.example.orderapp.data.network.*
 import com.example.orderapp.domain.Business
@@ -12,7 +14,10 @@ import com.example.orderapp.domain.MenuItem
 import com.example.orderapp.domain.Order
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
 
+@Suppress("IMPLICIT_CAST_TO_ANY")
 class BusinessRepository(
     private val database : BusinessDatabase
 ) {
@@ -26,9 +31,11 @@ class BusinessRepository(
     private val _currentOrder = MutableLiveData<Order>()
     val currentOrder : LiveData<Order> get() = _currentOrder
 
-    private val businesses = Transformations.map(database.businessDAO.getAll(), {
+    private val businesses = Transformations.map(database.businessDAO.getAll()) {
         it.asDomainModel()
-    })
+    }
+
+    val orderHistory = database.businessDAO.getAllOrderHistory()
 
     suspend fun refreshCurrentBusinessByID(id : String){
         withContext(Dispatchers.IO){
@@ -105,8 +112,24 @@ class BusinessRepository(
         item?.let {
             val oldAmount = updatedOrderItems.remove(it) ?: 0
             if(add) updatedOrderItems.put(it, oldAmount + 1)
-            else { if (oldAmount > 1) updatedOrderItems.put(it, oldAmount - 1) else {} }
+            else {
+                @Suppress("ControlFlowWithEmptyBody")
+                if (oldAmount > 1) updatedOrderItems.put(it, oldAmount - 1)
+                else {
+                    // keeps complaining if I don't put an else here
+                }
+            }
         }
         _currentOrder.postValue(Order(updatedOrderItems))
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    suspend fun placeOrder(order: Order, businessName: String, businessId : String) {
+        val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+        val currentDate = sdf.format(Date())
+        val entry = OrderHistoryDBE(currentDate, order.getTotalPrice(), businessName)
+        withContext(Dispatchers.IO){
+            database.businessDAO.insertOrderHistory(entry)
+        }
     }
 }

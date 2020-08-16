@@ -14,11 +14,18 @@ interface BusinessDatabaseDAO {
 
     @Query("DELETE FROM business_table")
     fun clear()
+
+    @Query("SELECT * FROM order_history_table")
+    fun getAllOrderHistory(): LiveData<List<OrderHistoryDBE>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertOrderHistory(vararg  orderHistory: OrderHistoryDBE)
 }
 
 @Database(entities = [
-    BusinessDBE::class
-], version = 1, exportSchema = false)
+    BusinessDBE::class,
+    OrderHistoryDBE::class
+], version = 3, exportSchema = false)
 abstract class BusinessDatabase : RoomDatabase() {
     abstract val businessDAO: BusinessDatabaseDAO
 }
@@ -32,7 +39,7 @@ fun getDatabase(context: Context): BusinessDatabase {
                 context.applicationContext,
                 BusinessDatabase::class.java,
                 "businesses"
-            ).build()
+            ).fallbackToDestructiveMigration().build()
         }
     }
     return INSTANCE

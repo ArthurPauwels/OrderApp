@@ -39,7 +39,6 @@ class BusinessOverview : Fragment() {
         //observe
         viewModel.overviewState.observe(viewLifecycleOwner, Observer { it -> updateState(it) })
         viewModel.navigationEvent.observe(viewLifecycleOwner, Observer { it -> navigate(it) })
-        viewModel.ratingString.observe(viewLifecycleOwner, Observer { it -> binding.txtRating.text = it })
         viewModel.tableString.observe(viewLifecycleOwner, Observer { it -> binding.txtTable.text = it })
 
         //setup binding

@@ -26,19 +26,10 @@ class BusinessOverviewViewModel(application: Application) : AndroidViewModel(app
     private val repository = BusinessRepository(database)
 
     val business = repository.currentBusiness
-    val ratingString :LiveData<String> = Transformations.map(business) { b -> getRatingString(b.rating) }
     val tableString : LiveData<String> = Transformations.map(_table) { table -> "Table: ${table}" }
 
     init {
         _overviewState.value = OverviewState.INITIAL
-    }
-
-    private fun getRatingString(rating: Int?) : String{
-        if (rating == null) {
-            return "no rating"
-        }else {
-            return "${rating} / 5"
-        }
     }
 
     fun handleScan(scanResult: IntentResult) {
@@ -85,7 +76,7 @@ class BusinessOverviewViewModel(application: Application) : AndroidViewModel(app
             return
         }
         if (business.value!!.isOpen())
-            _navigationEvent.value = OverviewNavigationEvent.TO_NOT_OPEN
+            _navigationEvent.value = OverviewNavigationEvent.TO_MENU
         else
             _navigationEvent.value = OverviewNavigationEvent.TO_NOT_OPEN
     }

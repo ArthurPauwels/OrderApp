@@ -24,10 +24,15 @@ class MenuViewModel(application: Application) : AndroidViewModel(application) {
     val order = repository.currentOrder
     val orderButtonString : LiveData<String> = Transformations.map(order) {if (it.getTotalPrice() > 0){"Order: €" + it.getTotalPrice().toString()} else "Select items to order"}
 
-    fun handeArgs(businessId: String){
+    private var businessName : String = ""
+    private var businessId : String = ""
+
+    fun handeArgs(businessId: String, businessName: String){
         viewModelScope.launch {
             repository.getMenuCategoryAndItemsForBusiness(businessId)
         }
+        this.businessId = businessId
+        this.businessName = businessName
     }
 
     fun handleRemoveMenuItem(menuItemId : String){
@@ -36,6 +41,17 @@ class MenuViewModel(application: Application) : AndroidViewModel(application) {
 
     fun handleAddMenuItem(menuItemId: String){
         repository.addOneToOrder(menuItemId)
+    }
+
+    fun onOrderClicked() {
+        val currentOrder = order.value
+        if (currentOrder != null) {
+            if (currentOrder.getTotalPrice() > 0) {
+                viewModelScope.launch {
+                    repository.placeOrder(currentOrder, businessName, businessId)
+                }
+            }
+        }
     }
 
     override fun onCleared() {

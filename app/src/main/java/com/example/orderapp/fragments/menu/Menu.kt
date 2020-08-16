@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.orderapp.R
 import com.example.orderapp.databinding.FragmentMenuBinding
 
@@ -29,8 +30,7 @@ class Menu : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val args = MenuArgs.fromBundle(requireArguments())
-        viewModel.handeArgs(args.businessID)
-
+        viewModel.handeArgs(args.businessID, args.businessName)
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu, container, false)
         binding.menuList.adapter = adapter
         viewModel.categories.observe(viewLifecycleOwner, Observer {
@@ -40,6 +40,10 @@ class Menu : Fragment() {
         })
         binding.setLifecycleOwner(this)
         binding.viewModel = viewModel
+        binding.bttnOrder.setOnClickListener {
+            viewModel.onOrderClicked()
+            findNavController().navigate(MenuDirections.actionMenuToOrderPlaced())
+        }
 
 
         activity?.findViewById<Toolbar>(R.id.action_bar)?.setTitle(args.businessName)

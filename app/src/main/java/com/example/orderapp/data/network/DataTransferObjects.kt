@@ -57,8 +57,7 @@ fun BusinessDTO.asDomainModel(): Business {
         description = description,
         //amenities = amenities,
         //paymentMethods = paymentMethods,
-        openingHours = OpeningHours.getSampleHours(),
-        rating = null
+        openingHours = OpeningHours.getSampleHours()
     )
 }
 
@@ -76,8 +75,7 @@ fun BusinessDTO.asDataModel(): BusinessDBE {
         thursdayHours = "12:00 - 20:00",
         fridayHours = "12:00 - 20:00",
         saturdayHours = "12:00 - 20:00",
-        sundayHours = "12:00 - 20:00",
-        rating = null
+        sundayHours = "12:00 - 20:00"
     )
 }
 

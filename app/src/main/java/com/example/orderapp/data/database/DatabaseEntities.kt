@@ -5,6 +5,8 @@ import com.example.orderapp.domain.Business
 import com.example.orderapp.domain.BusinessType
 import com.example.orderapp.domain.OpeningHours
 import com.example.orderapp.domain.Order
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Entity(tableName = "business_table")
@@ -20,11 +22,20 @@ data class BusinessDBE constructor(
     val thursdayHours : String,
     val fridayHours : String,
     val saturdayHours : String,
-    val sundayHours : String,
+    val sundayHours : String
     //val paymentMethods: String,
     //val amenities: String,
-    val rating : Int?
 )
+
+@Entity(tableName = "order_history_table")
+data class OrderHistoryDBE constructor(
+    val time : String,
+    val totalPrice : Double,
+    val businessName: String
+) {
+    @PrimaryKey(autoGenerate = true)
+    var id : Long = 0
+}
 
 fun List<BusinessDBE>.asDomainModel(): List<Business> {
     return map {
@@ -44,8 +55,7 @@ fun List<BusinessDBE>.asDomainModel(): List<Business> {
                 OpeningHours.parseOpeningHours(it.fridayHours),
                 OpeningHours.parseOpeningHours(it.saturdayHours),
                 OpeningHours.parseOpeningHours(it.sundayHours)
-            ),
-            rating = it.rating
+            )
         )
     }
 }
