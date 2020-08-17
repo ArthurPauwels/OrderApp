@@ -20,4 +20,5 @@ I wanted to try implementing the basics that would also show what I've learned d
 Before running, it's best to first start up the api. This can be found in the RestoAPI. zip folder. You can run it by running 'node server.js'. Take note of your personal ip adress and the port it's running on, because you will need to replace the baseUrl constant in the BusinessAPIService.kt file. I was initially going to try to host the API somewhere online but I didn't find a suitable way to do so in time.
 
 Once the app is running, you can scan this code. It correstponds to the Makisu restaurant.
+
 ![Qr code](https://github.com/ArthurPauwels/OrderApp/blob/master/qrcode.png?raw=true)
